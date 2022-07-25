@@ -1,2 +1,2 @@
 # Network-Traffic-Prediction
-Unsupervised Algorithm to Detect and Classify Malicious Network Activity
+Ensemble Model for Network Intrusion Detection and Threat Hunting
