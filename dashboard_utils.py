@@ -180,13 +180,13 @@ def explain_instance(i, kmeans, kmeans_test_y, y_test_preds_new, kmeans_test_lab
                                ' immediately contact Incident Response to control and block unwanted'
                                ' traffic.',
                         'r2l': 'For a Remote to Local (R2L) attack, we recommend locating the address '
-                               'of the remote machine and confirming it isn\'t a legitimate sample, temporarily disabling remote sample to the network, then identifying and patching any access points or backdoors.',
-                        'u2r': 'For a User to Root (U2R) attack, we recommend identifying the source of these samples, isolating the host (if possible), '
-                               'blocking the sample, and conducting a thorough security scan for malware, account breaches, etc.',
+                               'of the remote machine and confirming it isn\'t a legitimate connection, temporarily disabling remote connection to the network, then identifying and patching any access points or backdoors.',
+                        'u2r': 'For a User to Root (U2R) attack, we recommend identifying the source of this traffic, isolating the host (if possible), '
+                               'blocking the traffic, and conducting a thorough security scan for malware, account breaches, etc.',
                         'probe': 'For probing, we recommend confirming through network traffic examination, then '
                                  'configuring a firewall to prevent probing of your servers.',
                         'Outlier': 'For an outlier, we recommend further examination of the sample features in the table above, '
-                                   'which may help direct the security team to the root of the issue. Continue to monitor the sample for malicious intent.'}
+                                   'which may help direct the security team to the root of the issue. Continue to monitor the traffic for malicious intent.'}
 
 
 
