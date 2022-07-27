@@ -9,7 +9,6 @@ import seaborn as sns
 from matplotlib.patches import Rectangle
 import matplotlib.pyplot as plt
 import lime
-import lime.lime_tabular
 
 def read_array(file):
     content = np.loadtxt(file, delimiter=",")
