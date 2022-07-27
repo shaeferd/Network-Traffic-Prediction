@@ -17,8 +17,8 @@ def main():
 
     with st.sidebar:
         "## Intrusion Alerts"
-        st.dataframe(X_test_malicious[['connection_id', 'risk_score']], height=200)
-        "There were " + str(len(X_test_malicious)) + " malicious connections detected."
+        st.dataframe(X_test_malicious[['sample_id', 'risk_score']], height=200)
+        "There were " + str(len(X_test_malicious)) + " malicious samples detected."
 
         # Plot attacks by severity
         df_sev_counts = pd.DataFrame(X_test_malicious['Severity'].value_counts(),
@@ -29,15 +29,15 @@ def main():
         plt.xticks(x_pos, df_sev_counts.index)
         st.pyplot(fig)
 
-        # Select connection to analyze
+        # Select sample to analyze
         severity_filter = st.selectbox('Filter by Severity (Optional)', ['None', 'Critical', 'High', 'Medium', 'Low'])
         if severity_filter != "None":
             X_test_malicious = X_test_malicious[X_test_malicious['Severity'] == severity_filter]
-        selected_attack = st.selectbox('See Alert Analytics:', X_test_malicious['connection_id'])
+        selected_attack = st.selectbox('See Alert Analytics:', X_test_malicious['sample_id'])
 
     col1, col2 = st.columns(2)
     with col1:
-        risk_score = round(X_test_malicious[X_test_malicious['connection_id'] == selected_attack]['risk_score'].values[0], 1)
+        risk_score = round(X_test_malicious[X_test_malicious['sample_id'] == selected_attack]['risk_score'].values[0], 1)
         severity = get_severity(risk_score)
         color_map = {
             'Low': '#F1DB1C',
@@ -56,7 +56,7 @@ def main():
     xgb_pipeline2 = pickle.load(open('models/xgb_pipeline2.sav', 'rb'))
 
 
-    i = int(selected_attack.strip('CID')) - 1
+    i = int(selected_attack.strip('SID')) - 1
     explain_instance(i, kmeans, kmeans_test_y, y_test_preds_new, kmeans_test_labels, y_test_benign,
                      y_test_preds_combined, df_crosstab, continuous_cols, X_test, X_train, xgb_pipeline, xgb_pipeline2,
                      X_train_new, X_test_new, X_test_new2, col1, col2, optimal_threshold=0.0050058886)

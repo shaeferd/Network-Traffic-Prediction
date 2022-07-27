@@ -9,6 +9,7 @@ import seaborn as sns
 from matplotlib.patches import Rectangle
 import matplotlib.pyplot as plt
 import lime
+import lime.lime_tabular
 
 def read_array(file):
     content = np.loadtxt(file, delimiter=",")
@@ -121,7 +122,7 @@ def load_X_test_malicious(X_test_answer, test_probabilities, y_test_preds_combin
     X_test_answer['risk_score'] = scaler.fit_transform(X_test_answer[['risk_score']])
     X_test_malicious = X_test_answer[X_test_answer['y_test_preds_combined'] == 'malicious']
     X_test_malicious['Severity'] = X_test_malicious['risk_score'].apply(lambda x: get_severity(x))
-    X_test_malicious = X_test_malicious.sort_values(by='connection_id', ascending=True).reset_index()
+    X_test_malicious = X_test_malicious.sort_values(by='sample_id', ascending=True).reset_index()
     return X_test_malicious
 @st.cache
 def load_data():
@@ -146,7 +147,7 @@ def load_data():
     y_train_benign = list(df_test_labels['y_train_benign'])
     y_train = df_test_labels['y_train']
 
-    X_test.insert(0, 'connection_id', ['CID' + str(x + 1) for x in X_test.index])
+    X_test.insert(0, 'sample_id', ['SID' + str(x + 1) for x in X_test.index])
     X_test_answer = X_test.copy()
 
     X_test_malicious = load_X_test_malicious(X_test_answer, test_probabilities, y_test_preds_combined)
@@ -179,13 +180,13 @@ def explain_instance(i, kmeans, kmeans_test_y, y_test_preds_new, kmeans_test_lab
                                ' immediately contact Incident Response to control and block unwanted'
                                ' traffic.',
                         'r2l': 'For a Remote to Local (R2L) attack, we recommend locating the address '
-                               'of the remote machine and confirming it isn\'t a legitimate connection, temporarily disabling remote connection to the network, then identifying and patching any access points or backdoors.',
-                        'u2r': 'For a User to Root (U2R) attack, we recommend identifying the source of these connections, isolating the host (if possible), '
-                               'blocking the connection, and conducting a thorough security scan for malware, account breaches, etc.',
+                               'of the remote machine and confirming it isn\'t a legitimate sample, temporarily disabling remote sample to the network, then identifying and patching any access points or backdoors.',
+                        'u2r': 'For a User to Root (U2R) attack, we recommend identifying the source of these samples, isolating the host (if possible), '
+                               'blocking the sample, and conducting a thorough security scan for malware, account breaches, etc.',
                         'probe': 'For probing, we recommend confirming through network traffic examination, then '
                                  'configuring a firewall to prevent probing of your servers.',
-                        'Outlier': 'For an outlier, we recommend further examination of the connection features in the table above, '
-                                   'which may help direct the security team to the root of the issue. Continue to monitor the connection for malicious intent.'}
+                        'Outlier': 'For an outlier, we recommend further examination of the sample features in the table above, '
+                                   'which may help direct the security team to the root of the issue. Continue to monitor the sample for malicious intent.'}
 
 
 
@@ -224,7 +225,7 @@ def explain_instance(i, kmeans, kmeans_test_y, y_test_preds_new, kmeans_test_lab
                 unsafe_allow_html=True)
             st.markdown('<p style="font-family:sans-serif; color:#A00000; font-size: 30px;"><i>%s</i></p>' % (
                 class_dict[reason]), unsafe_allow_html=True)
-        st.write('This connection is labeled as',
+        st.write('This sample is labeled as',
               str(mal_dict[y_test_preds_combined[i]]) + ', part of which may be explained by its', feature_tup[0][0],
               'of', str(X_test.iloc[i][feature_tup[0][0]]), ',', feature_tup[1][0], 'of', str(X_test.iloc[i][feature_tup[1][0]])+
               ', and', feature_tup[2][0], 'of', str(X_test.iloc[i][feature_tup[2][0]]) + '.' + ' This attack is most likely classified as', reason + '.')
@@ -269,7 +270,7 @@ def explain_instance(i, kmeans, kmeans_test_y, y_test_preds_new, kmeans_test_lab
                 st.markdown('<p style="font-family:sans-serif; color:#A00000; font-size: 30px;"><i>%s</i></p>' % (
                     class_dict[category]), unsafe_allow_html=True)
 
-            st.write('This connection is labeled as',
+            st.write('This sample is labeled as',
                      str(mal_dict[y_test_preds_combined[i]]) + ', part of which may be explained by its',
                      feature_tup[0][0], 'of', str(X_test.iloc[i][feature_tup[0][0]]), ',', feature_tup[1][0], 'of',
                      str(X_test.iloc[i][feature_tup[1][0]]) + ', and', feature_tup[2][0], 'of',
