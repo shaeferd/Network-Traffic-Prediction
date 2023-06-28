@@ -24,7 +24,7 @@ def main():
         df_sev_counts = pd.DataFrame(X_test_malicious['Severity'].value_counts(),
                                      index=['Critical', 'High', 'Medium', 'Low'])
         if 'count' in df_sev_counts.columns:
-            df_sev_counts = df_sev_counts.rename(columns = {'count':'severity'})
+            df_sev_counts = df_sev_counts.rename(columns = {'count':'Severity'})
         x_pos = np.arange(len(df_sev_counts['Severity'].values))
         fig = plt.figure(figsize=(4, 3))
         plt.bar(x_pos, df_sev_counts['Severity'].values, color=['Red', '#F15E1C', '#F1891C', '#F1DB1C'])
