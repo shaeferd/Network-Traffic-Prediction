@@ -23,6 +23,7 @@ def main():
         # Plot attacks by severity
         df_sev_counts = pd.DataFrame(X_test_malicious['Severity'].value_counts(),
                                      index=['Critical', 'High', 'Medium', 'Low'])
+        print(df_sev_counts.head())
         x_pos = np.arange(len(df_sev_counts['Severity'].values))
         fig = plt.figure(figsize=(4, 3))
         plt.bar(x_pos, df_sev_counts['Severity'].values, color=['Red', '#F15E1C', '#F1891C', '#F1DB1C'])
