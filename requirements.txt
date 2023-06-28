@@ -6,5 +6,5 @@ pandas
 scikit_learn
 seaborn
 streamlit
-xgboost
+xgboost==1.2.0
 pickle-mixin
