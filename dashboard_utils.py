@@ -113,7 +113,7 @@ def load_df_crosstab():
     df_crosstab = pd.read_csv('data/df_crosstab.csv')
     return df_crosstab
 
-@st.cache
+@st.cache_data
 def load_X_test_malicious(X_test_answer, test_probabilities, y_test_preds_combined):
     scaler = MinMaxScaler((1, 10))
     X_test_answer['risk_score'] = test_probabilities
@@ -124,7 +124,7 @@ def load_X_test_malicious(X_test_answer, test_probabilities, y_test_preds_combin
     X_test_malicious['Severity'] = X_test_malicious['risk_score'].apply(lambda x: get_severity(x))
     X_test_malicious = X_test_malicious.sort_values(by='sample_id', ascending=True).reset_index()
     return X_test_malicious
-@st.cache
+@st.cache_data
 def load_data():
     continuous_cols = load_continuous_cols()
 
