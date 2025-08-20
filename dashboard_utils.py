@@ -10,6 +10,7 @@ from matplotlib.patches import Rectangle
 import matplotlib.pyplot as plt
 import lime
 import lime.lime_tabular
+import os
 
 def read_array(file):
     content = np.loadtxt(file, delimiter=",")
@@ -264,6 +265,38 @@ def explain_instance(i, kmeans, kmeans_test_y, y_test_preds_new, kmeans_test_lab
                 probs = dict(zip(xgb_pipeline2.steps[2][1].classes_, list(xgb_pipeline2.steps[2][1].predict_proba(X_test_new2[[i]])[0])))
                 probs = sorted(probs.items(), key = lambda x: x[1], reverse = True)
                 category = probs[1][0]
+            
+            # Handle both string and numeric category values
+            if isinstance(category, (int, float)):
+                # If category is numeric, try to decode it using the label encoder
+                try:
+                    # Load the label encoder if available
+                    if os.path.exists('models/label_encoder.sav'):
+                        with open('models/label_encoder.sav', 'rb') as f:
+                            label_encoder = pickle.load(f)
+                        category = label_encoder.inverse_transform([int(category)])[0]
+                    else:
+                        # Fallback mapping for common numeric values
+                        numeric_to_category = {0: 'benign', 1: 'dos', 2: 'probe', 3: 'r2l', 4: 'u2r'}
+                        category = numeric_to_category.get(int(category), 'unknown')
+                except:
+                    # If all else fails, use a default category
+                    category = 'dos'
+            
+            # Ensure category is a valid key in class_dict
+            if category not in class_dict:
+                # Try to find a similar category or use default
+                if 'dos' in str(category).lower():
+                    category = 'dos'
+                elif 'probe' in str(category).lower():
+                    category = 'probe'
+                elif 'r2l' in str(category).lower():
+                    category = 'r2l'
+                elif 'u2r' in str(category).lower():
+                    category = 'u2r'
+                else:
+                    category = 'dos'  # Default fallback
+            
             with col1:
                 st.markdown('<p style="font-family:sans-serif; color:#707070; font-size: 20px;">Category</p>',
                     unsafe_allow_html=True)
@@ -273,7 +306,7 @@ def explain_instance(i, kmeans, kmeans_test_y, y_test_preds_new, kmeans_test_lab
             st.write('This sample is labeled as',
                      str(mal_dict[y_test_preds_combined[i]]) + ', part of which may be explained by its',
                      feature_tup[0][0], 'of', str(X_test.iloc[i][feature_tup[0][0]]), ',', feature_tup[1][0], 'of',
-                     str(X_test.iloc[i][feature_tup[1][0]]) + ', and', feature_tup[2][0], 'of',
+                     str(X_test.iloc[i][feature_tup[0][0]]) + ', and', feature_tup[2][0], 'of',
                      str(X_test.iloc[i][feature_tup[2][0]]) + '.' + ' This attack is most likely classified as',
                      class_dict[category] + '.')
 

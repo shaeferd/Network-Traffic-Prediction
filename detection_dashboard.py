@@ -7,6 +7,28 @@ import pickle
 import matplotlib.pyplot as plt
 
 
+def ensure_xgboost_compatibility(data):
+    """
+    Ensure data is compatible with XGBoost by handling array layout issues.
+    This fixes the 'Unable to avoid copy while creating an array' error.
+    """
+    if hasattr(data, 'values'):
+        data = data.values
+    
+    # Convert to numpy array and ensure proper memory layout
+    data = np.asarray(data)
+    
+    # If it's a 2D array, ensure it's contiguous
+    if data.ndim == 2:
+        data = np.ascontiguousarray(data)
+    
+    # Convert to float32 for better compatibility
+    if data.dtype != np.float32:
+        data = data.astype(np.float32)
+    
+    return data
+
+
 def main():
     # Load Data
     continuous_cols, kmeans, X_test, X_test_malicious, kmeans_test_y, y_test_preds_new, \
@@ -59,9 +81,14 @@ def main():
 
 
     i = int(selected_attack.strip('SID')) - 1
+    
+    # Ensure data compatibility before calling explain_instance
+    X_test_new_compatible = ensure_xgboost_compatibility(X_test_new)
+    X_train_new_compatible = ensure_xgboost_compatibility(X_train_new)
+    
     explain_instance(i, kmeans, kmeans_test_y, y_test_preds_new, kmeans_test_labels, y_test_benign,
                      y_test_preds_combined, df_crosstab, continuous_cols, X_test, X_train, xgb_pipeline, xgb_pipeline2,
-                     X_train_new, X_test_new, X_test_new2, col1, col2, optimal_threshold=0.0050058886)
+                     X_train_new_compatible, X_test_new_compatible, X_test_new2, col1, col2, optimal_threshold=0.0050058886)
 
 
 if __name__ == '__main__':
